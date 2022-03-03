@@ -1,5 +1,5 @@
 FROM debian:buster-slim
-LABEL maintainer="Peter Martini <PeterCMartini@GMail.com>, Zak B. Elep <zakame@cpan.org>"
+LABEL maintainer="Ryan Voots <simcop@cpan.org>"
 
 COPY *.patch /usr/src/perl/
 WORKDIR /usr/src/perl
