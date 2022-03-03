@@ -35,7 +35,7 @@ RUN apt-get update \
     && archFlag="$([ "$archBits" = '64' ] && echo '-Duse64bitall' || echo '-Duse64bitint')" \
     && ./Configure -Darchname="$gnuArch" "$archFlag" -Accflags=-ggdb -DDEBUGGING -Dusethreads -Duselongdouble -Duseshrplib -Dvendorprefix=/usr/local -Aldflags='-Wl,-z,now -Wl,-zrelro -Wl,-z,noexecstack' -Accflags='-fpie -fPIC -fstack-protector-all -pie -D_FORTIFY_SOURCE=2' -Duseshrplib  -des \
     && make -j$(nproc) \
-    && TEST_JOBS=$(nproc) make test_harness \
+    && LD_LIBRARY_PATH=. ./perl -Ilib -de0 \
     && make install \
     && cd /usr/src \
     && curl -LO https://www.cpan.org/authors/id/M/MI/MIYAGAWA/App-cpanminus-1.7044.tar.gz \
