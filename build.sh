@@ -3,7 +3,7 @@
 set -euxo pipefail
 
 for build in 5*; do
-        TAG=simcop2387/perl:$build
+	TAG=simcop2387/perl:$(echo $build | perl -pE 's/,/-/g')
         ( cd $build;
         docker build -t $TAG .
         docker push $TAG
