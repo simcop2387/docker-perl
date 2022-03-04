@@ -1,27 +1,56 @@
-FROM buildpack-deps:bullseye-backports
+FROM debian:bullseye-backports
 LABEL maintainer="Ryan Voots <simcop@cpan.org>"
 
 COPY *.patch /usr/src/perl/
 WORKDIR /usr/src/perl
 
-RUN true \
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN perl -i.bak -pE '$x=$_; $x=~s|^deb |deb-src |g;$_.=$x' /etc/apt/sources.list \
+    && apt update \
+    && apt -yq full-upgrade \
+    && apt -yq build-dep perl \
+    &&     apt-get install -y --no-install-recommends \
+       bzip2 \
+       ca-certificates \
+       # cpio \
+       curl \
+       dpkg-dev \
+       # file \
+       gcc \
+       # g++ \
+       libbz2-dev \
+       libdb-dev \
+       libc6-dev \
+       libgdbm-dev \
+       liblzma-dev \
+       make \
+       netbase \
+       patch \
+       procps \
+       zlib1g-dev \
+       xz-utils \
     && curl -SL https://www.cpan.org/src/5.0/perl-5.30.3.tar.xz -o perl-5.30.3.tar.xz \
-    && echo '6967595f2e3f3a94544c35152f9a25e0cb8ea24ae45f4bf1882f2e33f4a400f4 *perl-5.30.3.tar.xz' | sha256sum -c - \
-    && tar --strip-components=1 -xaf perl-5.30.3.tar.xz -C /usr/src/perl \
+    && echo '6967595f2e3f3a94544c35152f9a25e0cb8ea24ae45f4bf1882f2e33f4a400f4 *perl-5.30.3.tar.xz' | sha256sum -c -
+RUN tar --strip-components=1 -xaf perl-5.30.3.tar.xz -C /usr/src/perl \
     && rm perl-5.30.3.tar.xz \
-    && cat *.patch | patch -p1 \
-    && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+    && cat *.patch | patch -p1
+RUN gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     && archBits="$(dpkg-architecture --query DEB_BUILD_ARCH_BITS)" \
     && archFlag="$([ "$archBits" = '64' ] && echo '-Duse64bitall' || echo '-Duse64bitint')" \
     && ./Configure -Darchname="$gnuArch" "$archFlag" -Duselongdouble -Duseshrplib -Dvendorprefix=/usr/local -Aldflags='-Wl,-z,now -Wl,-zrelro -Wl,-z,noexecstack' -Accflags='-fpie -fPIC -fstack-protector-all -pie -D_FORTIFY_SOURCE=2' -Duseshrplib  -des \
     && make -j$(nproc) \
-    && LD_LIBRARY_PATH=. ./perl -Ilib -de0 \
-    && make install \
+    && TEST_JOBS=$(nproc) make test_harness
+RUN make install \
     && cd /usr/src \
     && curl -LO https://www.cpan.org/authors/id/M/MI/MIYAGAWA/App-cpanminus-1.7044.tar.gz \
     && echo '9b60767fe40752ef7a9d3f13f19060a63389a5c23acc3e9827e19b75500f81f3 *App-cpanminus-1.7044.tar.gz' | sha256sum -c - \
     && tar -xzf App-cpanminus-1.7044.tar.gz && cd App-cpanminus-1.7044 && perl bin/cpanm . && cd /root \
-    && true \
+    && savedPackages="make netbase" \
+    && apt-mark auto '.*' > /dev/null \
+    && apt-mark manual $savedPackages \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && rm -fr /var/cache/apt/* /var/lib/apt/lists/* \
     && rm -fr ./cpanm /root/.cpanm /usr/src/perl /usr/src/App-cpanminus-1.7044* /tmp/*
 
 WORKDIR /

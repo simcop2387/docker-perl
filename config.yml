@@ -12,7 +12,7 @@ options:
 releases:
   - version: 5.28.3
     sha256:  77dc1ddf541643af14d585867d3d0741cce45d0dbe8f1467024e63165d9e2fc5
-    run_tests: no
+    run_tests: parallel
     type:    xz
     debian_release:
       - buster
@@ -20,7 +20,7 @@ releases:
 
   - version: 5.26.3
     sha256: e0a17cdaed5304aea1783e507e56bb0001dd72c46f211553ead3a580c3f38135 
-    run_tests: no
+    run_tests: parallel
     type:    xz
     debian_release:
       - buster
@@ -28,7 +28,7 @@ releases:
 
   - version: 5.24.4
     sha256: 7f080287ff64750270689843ae945f02159a33cb8f2fc910248c15befba5db84 
-    run_tests: no
+    run_tests: parallel
     type:    xz
     debian_release:
       - buster
@@ -36,7 +36,7 @@ releases:
 
   - version: 5.22.4
     sha256:  713243dce27d7aa0bdbf52b2070de5ce449f9ffbcc14a93efbc6f2beff0f5ce8
-    run_tests: no
+    run_tests: parallel
     type:    xz
     debian_release:
       - buster
@@ -44,7 +44,7 @@ releases:
 
   - version: 5.20.3
     sha256:  1b40068166c242e34a536836286e70b78410602a80615143301e52aa2901493b
-    run_tests: no
+    run_tests: parallel
     type:    bz2
     debian_release:
       - buster
@@ -52,7 +52,7 @@ releases:
 
   - version: 5.30.3
     sha256:  6967595f2e3f3a94544c35152f9a25e0cb8ea24ae45f4bf1882f2e33f4a400f4
-    run_tests: no
+    run_tests: parallel
     type:    xz
     debian_release:
       - buster
@@ -60,7 +60,7 @@ releases:
 
   - version: 5.32.1
     sha256:  57cc47c735c8300a8ce2fa0643507b44c4ae59012bfdad0121313db639e02309
-    run_tests: no
+    run_tests: parallel
     type:    xz
     debian_release:
       - buster
@@ -68,7 +68,7 @@ releases:
 
   - version: 5.34.0
     sha256:  82c2e5e5c71b0e10487a80d79140469ab1f8056349ca8545140a224dbbed7ded
-    run_tests: no
+    run_tests: parallel
     type:    xz
     debian_release:
       - buster

@@ -36,8 +36,7 @@ EOF
 }
 
 my $docker_slim_run_install = <<'EOF';
-apt-get update \
-    && apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-recommends \
        bzip2 \
        ca-certificates \
        # cpio \
@@ -152,7 +151,7 @@ for my $release (@{$config->{releases}}) {
 
     $release->{extra_flags}    ||= '';
 
-    $release->{image} = $build =~ /main/ ? 'buildpack-deps' : 'debian';
+    $release->{image} = 'debian';
 
     for my $debian_release (@{$release->{debian_release}}) {
 
@@ -161,16 +160,9 @@ for my $release (@{$config->{releases}}) {
         for (qw(version pause extra_flags sha256 type url image cpanm_dist_name cpanm_dist_url cpanm_dist_sha256));
       $output =~ s/\{\{args\}\}/$builds{$build}/mg;
 
-      if ($build =~ /slim/) {
         $output =~ s/\{\{docker_slim_run_install\}\}/$docker_slim_run_install/mg;
         $output =~ s/\{\{docker_slim_run_purge\}\}/$docker_slim_run_purge/mg;
-        $output =~ s/\{\{tag\}\}/$debian_release-slim/mg;
-      }
-      else {
-        $output =~ s/\{\{docker_slim_run_install\}\}/true/mg;
-        $output =~ s/\{\{docker_slim_run_purge\}\}/true/mg;
-        $output =~ s/\{\{tag\}\}/$debian_release/mg;
-      }
+	$output =~ s/\{\{tag\}\}/$debian_release/mg;
 
       my $dir = sprintf "%i.%03i.%03i-%s-%s", ($release->{version} =~ /(\d+)\.(\d+)\.(\d+)/), $build, $debian_release;
 
@@ -288,19 +280,25 @@ LABEL maintainer="Ryan Voots <simcop@cpan.org>"
 COPY *.patch /usr/src/perl/
 WORKDIR /usr/src/perl
 
-RUN {{docker_slim_run_install}} \
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN perl -i.bak -pE '$x=$_; $x=~s|^deb |deb-src |g;$_.=$x' /etc/apt/sources.list \
+    && apt update \
+    && apt -yq full-upgrade \
+    && apt -yq build-dep perl \
+    && {{docker_slim_run_install}} \
     && curl -SL {{url}} -o perl-{{version}}.tar.{{type}} \
-    && echo '{{sha256}} *perl-{{version}}.tar.{{type}}' | sha256sum -c - \
-    && tar --strip-components=1 -xaf perl-{{version}}.tar.{{type}} -C /usr/src/perl \
+    && echo '{{sha256}} *perl-{{version}}.tar.{{type}}' | sha256sum -c -
+RUN tar --strip-components=1 -xaf perl-{{version}}.tar.{{type}} -C /usr/src/perl \
     && rm perl-{{version}}.tar.{{type}} \
-    && cat *.patch | patch -p1 \
-    && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+    && cat *.patch | patch -p1
+RUN gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     && archBits="$(dpkg-architecture --query DEB_BUILD_ARCH_BITS)" \
     && archFlag="$([ "$archBits" = '64' ] && echo '-Duse64bitall' || echo '-Duse64bitint')" \
     && ./Configure -Darchname="$gnuArch" "$archFlag" {{args}} {{extra_flags}} -des \
     && make -j$(nproc) \
-    && {{test}} \
-    && make install \
+    && {{test}}
+RUN make install \
     && cd /usr/src \
     && curl -LO {{cpanm_dist_url}} \
     && echo '{{cpanm_dist_sha256}} *{{cpanm_dist_name}}.tar.gz' | sha256sum -c - \
