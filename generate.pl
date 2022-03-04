@@ -46,16 +46,16 @@ apt-get update \
        # file \
        gcc \
        # g++ \
-       # libbz2-dev \
-       # libdb-dev \
+       libbz2-dev \
+       libdb-dev \
        libc6-dev \
-       # libgdbm-dev \
-       # liblzma-dev \
+       libgdbm-dev \
+       liblzma-dev \
        make \
        netbase \
        patch \
-       # procps \
-       # zlib1g-dev \
+       procps \
+       zlib1g-dev \
        xz-utils
 EOF
 chomp $docker_slim_run_install;
@@ -282,7 +282,7 @@ Default: C<yes>
 =cut
 
 __DATA__
-FROM {{image}}:{{tag}}
+FROM {{image}}:{{tag}}-backports
 LABEL maintainer="Ryan Voots <simcop@cpan.org>"
 
 COPY *.patch /usr/src/perl/
