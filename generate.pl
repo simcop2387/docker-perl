@@ -292,7 +292,7 @@ RUN perl -i.bak -pE '$x=$_; $x=~s|^deb |deb-src |g;$_.=$x' /etc/apt/sources.list
 RUN tar --strip-components=1 -xaf perl-{{version}}.tar.{{type}} -C /usr/src/perl \
     && rm perl-{{version}}.tar.{{type}} \
     && cat *.patch | patch -p1 \
-    && rm -f /usr/src/perl/ext/GDBM_File/t/fatal.t
+    && truncate -s0 /usr/src/perl/ext/GDBM_File/t/fatal.t
 RUN gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     && archBits="$(dpkg-architecture --query DEB_BUILD_ARCH_BITS)" \
     && archFlag="$([ "$archBits" = '64' ] && echo '-Duse64bitall' || echo '-Duse64bitint')" \
