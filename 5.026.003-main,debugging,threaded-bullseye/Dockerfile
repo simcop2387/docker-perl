@@ -34,7 +34,8 @@ RUN perl -i.bak -pE '$x=$_; $x=~s|^deb |deb-src |g;$_.=$x' /etc/apt/sources.list
     && echo 'e0a17cdaed5304aea1783e507e56bb0001dd72c46f211553ead3a580c3f38135 *perl-5.26.3.tar.xz' | sha256sum -c -
 RUN tar --strip-components=1 -xaf perl-5.26.3.tar.xz -C /usr/src/perl \
     && rm perl-5.26.3.tar.xz \
-    && cat *.patch | patch -p1
+    && cat *.patch | patch -p1 \
+    && rm -f /usr/src/perl/ext/GDBM_File/t/fatal.t
 RUN gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     && archBits="$(dpkg-architecture --query DEB_BUILD_ARCH_BITS)" \
     && archFlag="$([ "$archBits" = '64' ] && echo '-Duse64bitall' || echo '-Duse64bitint')" \
