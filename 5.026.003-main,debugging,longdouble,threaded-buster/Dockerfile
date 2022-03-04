@@ -1,4 +1,4 @@
-FROM buildpack-deps:buster
+FROM buildpack-deps:buster-backports
 LABEL maintainer="Ryan Voots <simcop@cpan.org>"
 
 COPY *.patch /usr/src/perl/

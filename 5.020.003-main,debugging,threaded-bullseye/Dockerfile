@@ -1,4 +1,4 @@
-FROM buildpack-deps:bullseye
+FROM buildpack-deps:bullseye-backports
 LABEL maintainer="Ryan Voots <simcop@cpan.org>"
 
 COPY *.patch /usr/src/perl/
