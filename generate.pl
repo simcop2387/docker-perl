@@ -106,6 +106,8 @@ for my $build (@{$config->{builds}}) {
   $builds{"$build,debugging,threaded"} = "@{$config->{options}}{qw/debugging threaded common/}";
   $builds{"$build,debugging,longdouble,threaded"} = "@{$config->{options}}{qw/debugging threaded longdouble common/}";
   $builds{"$build,debugging,quadmath,threaded"} = "@{$config->{options}}{qw/debugging threaded quadmath common/}";
+  $builds{"$build,debugging,longdouble"} = "@{$config->{options}}{qw/debugging longdouble common/}";
+  $builds{"$build,debugging,quadmath"} = "@{$config->{options}}{qw/debugging quadmath common/}";
 }
 
 for my $release (@{$config->{releases}}) {
