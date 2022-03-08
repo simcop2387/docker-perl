@@ -290,18 +290,18 @@ RUN perl -i.bak -pE '$x=$_; $x=~s|^deb |deb-src |g;$_.=$x' /etc/apt/sources.list
     && apt -yq build-dep perl \
     && {{docker_slim_run_install}} \
     && curl -SL {{url}} -o perl-{{version}}.tar.{{type}} \
-    && echo '{{sha256}} *perl-{{version}}.tar.{{type}}' | sha256sum -c -
-RUN tar --strip-components=1 -xaf perl-{{version}}.tar.{{type}} -C /usr/src/perl \
+    && echo '{{sha256}} *perl-{{version}}.tar.{{type}}' | sha256sum -c - \
+    && tar --strip-components=1 -xaf perl-{{version}}.tar.{{type}} -C /usr/src/perl \
     && rm perl-{{version}}.tar.{{type}} \
     && cat *.patch | patch -p1 \
-    && echo 'print "1..0 # Skipped: Tests are invalid"' > /usr/src/perl/ext/GDBM_File/t/fatal.t
-RUN gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+    && echo 'print "1..0 # Skipped: Tests are invalid"' > /usr/src/perl/ext/GDBM_File/t/fatal.t \
+    && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     && archBits="$(dpkg-architecture --query DEB_BUILD_ARCH_BITS)" \
     && archFlag="$([ "$archBits" = '64' ] && echo '-Duse64bitall' || echo '-Duse64bitint')" \
     && ./Configure -Darchname="$gnuArch" "$archFlag" {{args}} {{extra_flags}} -des \
     && make -j$(nproc) \
-    && {{test}}
-RUN make install \
+    && {{test}} \
+    && make install \
     && cd /usr/src \
     && curl -LO {{cpanm_dist_url}} \
     && echo '{{cpanm_dist_sha256}} *{{cpanm_dist_name}}.tar.gz' | sha256sum -c - \

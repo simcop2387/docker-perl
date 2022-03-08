@@ -31,18 +31,18 @@ RUN perl -i.bak -pE '$x=$_; $x=~s|^deb |deb-src |g;$_.=$x' /etc/apt/sources.list
        zlib1g-dev \
        xz-utils \
     && curl -SL https://www.cpan.org/src/5.0/perl-5.34.0.tar.xz -o perl-5.34.0.tar.xz \
-    && echo '82c2e5e5c71b0e10487a80d79140469ab1f8056349ca8545140a224dbbed7ded *perl-5.34.0.tar.xz' | sha256sum -c -
-RUN tar --strip-components=1 -xaf perl-5.34.0.tar.xz -C /usr/src/perl \
+    && echo '82c2e5e5c71b0e10487a80d79140469ab1f8056349ca8545140a224dbbed7ded *perl-5.34.0.tar.xz' | sha256sum -c - \
+    && tar --strip-components=1 -xaf perl-5.34.0.tar.xz -C /usr/src/perl \
     && rm perl-5.34.0.tar.xz \
     && cat *.patch | patch -p1 \
-    && echo 'print "1..0 # Skipped: Tests are invalid"' > /usr/src/perl/ext/GDBM_File/t/fatal.t
-RUN gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+    && echo 'print "1..0 # Skipped: Tests are invalid"' > /usr/src/perl/ext/GDBM_File/t/fatal.t \
+    && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     && archBits="$(dpkg-architecture --query DEB_BUILD_ARCH_BITS)" \
     && archFlag="$([ "$archBits" = '64' ] && echo '-Duse64bitall' || echo '-Duse64bitint')" \
     && ./Configure -Darchname="$gnuArch" "$archFlag" -Accflags=-ggdb -DDEBUGGING -Dusethreads -Duseshrplib -Dvendorprefix=/usr/local -Aldflags='-Wl,-z,now -Wl,-zrelro -Wl,-z,noexecstack' -Accflags='-fpie -fPIC -fstack-protector-all -pie -D_FORTIFY_SOURCE=2' -Duseshrplib  -des \
     && make -j$(nproc) \
-    && TEST_JOBS=$(nproc) make test_harness
-RUN make install \
+    && TEST_JOBS=$(nproc) make test_harness \
+    && make install \
     && cd /usr/src \
     && curl -LO https://www.cpan.org/authors/id/M/MI/MIYAGAWA/App-cpanminus-1.7044.tar.gz \
     && echo '9b60767fe40752ef7a9d3f13f19060a63389a5c23acc3e9827e19b75500f81f3 *App-cpanminus-1.7044.tar.gz' | sha256sum -c - \
