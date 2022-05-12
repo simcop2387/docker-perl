@@ -121,7 +121,7 @@ for my $release (@{$config->{releases}}) {
   }
   else {
     print "Downloading $url\n";
-    getstore($url, "downloads/$file");
+    getstore($url, "downloads/$file") or die "failed";
   }
   {
     my $dir = "downloads/perl-$release->{version}";

@@ -8,6 +8,6 @@ for build in 5*; do
         ( cd $build;
         docker build -t $TAG .
         docker push $TAG
-        ) | ts "$TAG [%H:%M:%S]"  > build.$TAG.log || echo "  Failed to build $TAG"
+        ) | ts "$TAG [%H:%M:%S]" | tee build.$TAG.log || echo "  Failed to build $TAG"
 done
 
