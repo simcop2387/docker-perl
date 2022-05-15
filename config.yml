@@ -5,7 +5,7 @@ builds:
 options:
   common: "-Duseshrplib -Dvendorprefix=/usr/local -Aldflags='-Wl,-z,now -Wl,-zrelro -Wl,-z,noexecstack' -Accflags='-fpie -fPIC -fstack-protector-all -pie -D_FORTIFY_SOURCE=2' -Duseshrplib"
   threaded: "-Dusethreads"
-  quadmath: "-Dusequadmath"
+  longdouble: "-Duselongdouble"
   debugging: "-Accflags=-ggdb -DDEBUGGING"
 
 releases:
