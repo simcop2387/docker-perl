@@ -6,6 +6,7 @@ options:
   common: "-Duseshrplib -Dvendorprefix=/usr/local -Aldflags='-Wl,-z,now -Wl,-zrelro -Wl,-z,noexecstack' -Accflags='-fpie -fPIC -fstack-protector-all -pie -D_FORTIFY_SOURCE=2' -Duseshrplib"
   threaded: "-Dusethreads"
   longdouble: "-Duselongdouble"
+  quadmath: "-Dusequadmath"
   debugging: "-Accflags=-ggdb -DDEBUGGING"
 
 releases:
@@ -67,6 +68,22 @@ releases:
 
   - version: 5.34.0
     sha256:  82c2e5e5c71b0e10487a80d79140469ab1f8056349ca8545140a224dbbed7ded
+    run_tests: parallel
+    type:    xz
+    debian_release:
+      - buster
+      - bullseye
+
+  - version: 5.34.1
+    sha256: 6d52cf833ff1af27bb5e986870a2c30cec73c044b41e3458cd991f94374039f7  
+    run_tests: parallel
+    type:    xz
+    debian_release:
+      - buster
+      - bullseye
+  
+  - version: 5.36.0
+    sha256: 0f386dccbee8e26286404b2cca144e1005be65477979beb9b1ba272d4819bcf0
     run_tests: parallel
     type:    xz
     debian_release:
