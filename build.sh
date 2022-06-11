@@ -10,9 +10,9 @@ for build in 5*; do
 		# exclude arm64 from quadmath builds since it doesn't apply
 		PLATFORMS=linux/amd64
 	fi
-	echo building $TAG...
+	echo building $TAG... $PLATFORMS
         ( cd $build;
-        docker buildx build --platform=linux/amd64,linux/arm64 --progress=simple -t $TAG -t $LOCAL_TAG . 2>&1 && \
+        docker buildx build --cache-from type=registry,ref=registry.docker.home.simcop2387.info:443/simcop2387/perl --cache-to type=registry,ref=registry.docker.home.simcop2387.info:443/simcop2387/perl,mode=max --platform=$PLATFORMS --progress=simple -t $TAG -t $LOCAL_TAG --push . 2>&1 && \
         docker push $TAG && \
         docker push $LOCAL_TAG
         ) | ts "$TAG [%H:%M:%S]" | tee build.$TAG.log || echo "  Failed to build $TAG"
